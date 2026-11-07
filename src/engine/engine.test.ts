@@ -137,6 +137,26 @@ describe('Simulation', () => {
     i.rent.phases[0].childPct = 70
     expect(simulate(i, { mode: 'rent' }).childQuota).toBe(1)
   })
+  it('Vermietung an Kind aus „Familie“ entspricht der Phase childRent', () => {
+    const a = plain()
+    a.family.enabled = true
+    a.family.rentToChild = true
+    a.family.rentPct = 66
+    const b = plain()
+    b.family.enabled = true
+    b.rent.phases = [{ id: 'a', kind: 'childRent', months: null, childPct: 66 }]
+    const sa = simulate(a, { mode: 'rent' })
+    const sb = simulate(b, { mode: 'rent' })
+    expect(sa.sumCf).toBeCloseTo(sb.sumCf, 6)
+    expect(sa.childQuota).toBe(1)
+    // Zeitraum: erst ab Jahr 2, für 3 Jahre
+    a.family.rentFromYear = 2
+    a.family.rentYears = 3
+    const sc = simulate(a, { mode: 'rent' })
+    expect(sc.years[0].phases).toEqual(['rent'])
+    expect(sc.years[3].phases).toContain('childRent')
+    expect(sc.years[6].phases).toEqual(['rent'])
+  })
   it('Unentgeltliche Überlassung: keine Steuerwirkung', () => {
     const i = plain()
     i.rent.phases = [{ id: 'a', kind: 'childFree', months: null, childPct: 0 }]

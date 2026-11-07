@@ -221,6 +221,17 @@ export function simulate(inp: Inputs, opts: SimOptions): SimResult {
       childPctOf[m] = last.childPct
       m++
     }
+    // Vermietung an Kind aus „Familie“: überschreibt die Phasen im Zeitraum (Leerstand bleibt)
+    const f = inp.family
+    if (f.enabled && f.rentToChild) {
+      const from = Math.max(0, Math.round(f.rentFromYear * 12))
+      const to = f.rentYears > 0 ? from + Math.round(f.rentYears * 12) : Infinity
+      for (let i = from; i < Math.min(to, phaseOf.length); i++) {
+        if (phaseOf[i] === 'vacant') continue
+        phaseOf[i] = 'childRent'
+        childPctOf[i] = f.rentPct
+      }
+    }
   }
 
   // Totalüberschussprognose für verbilligte Vermietung an Kinder (50–66 %)

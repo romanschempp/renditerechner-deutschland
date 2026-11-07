@@ -165,6 +165,14 @@ export interface Inputs {
   family: {
     enabled: boolean
     child: { name: string; age: number; kindergeldUntil: number; zve: number }
+    /** Wohnung an das Kind vermieten (überschreibt die Nutzungsphasen im Zeitraum). */
+    rentToChild: boolean
+    /** Miete in % der ortsüblichen Warmmiete (≥ 66 % = voller Werbungskostenabzug). */
+    rentPct: number
+    /** Beginn in Jahren ab Kauf. */
+    rentFromYear: number
+    /** Dauer in Jahren; 0 = bis zum Ende. */
+    rentYears: number
     transfer: 'none' | 'gift' | 'usufruct' | 'saleToChild'
     transferYear: number
     donors: 1 | 2

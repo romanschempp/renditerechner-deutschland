@@ -28,6 +28,28 @@ export function FamilySection({ inp, up, a }: P) {
               onChange={(v) => up((d) => { d.family.child.zve = v })} />
           </Grid>
 
+          <Sub>Vermietung an Kind</Sub>
+          <Toggle label={`Wohnung an ${f.child.name || 'das Kind'} vermieten`} checked={f.rentToChild}
+            info="Ersetzt im gewählten Zeitraum die Phasen unter „5 · Nutzung“ (ein Leerstand bleibt). § 21 Abs. 2 EStG: ab 66 % der ortsüblichen Warmmiete voller Werbungskostenabzug; 50–66 % nur mit positiver Totalüberschussprognose; darunter anteilig."
+            onChange={(v) => up((d) => { d.family.rentToChild = v })} />
+          {f.rentToChild && (
+            <Grid>
+              <NumField label="Miete in % der ortsüblichen Warmmiete" unit="%" digits={0} value={f.rentPct} min={0} max={150}
+                hint={`${eur((f.rentPct / 100) * (inp.rent.localRent + inp.costs.umlage))} warm / Monat · ${f.rentPct >= 66 ? 'voller Werbungskostenabzug' : f.rentPct >= 50 ? 'Totalüberschussprognose entscheidet' : 'Werbungskosten nur anteilig'}`}
+                onChange={(v) => up((d) => { d.family.rentPct = v })} />
+              <NumField label="Ab" unit="Jahren nach Kauf" digits={1} value={f.rentFromYear} min={0} max={40}
+                hint={`≈ ${inp.object.purchaseYear + Math.floor((inp.object.purchaseMonth - 1 + f.rentFromYear * 12) / 12)}`}
+                onChange={(v) => up((d) => { d.family.rentFromYear = v })} />
+              <NumField label="Dauer" unit="Jahre" digits={1} value={f.rentYears || null} min={0} max={60} placeholder="bis Ende"
+                onChange={(v) => up((d) => { d.family.rentYears = v })} />
+            </Grid>
+          )}
+          {f.rentToChild && (
+            <Note tone="warn">
+              Fremdvergleich: schriftlicher Mietvertrag, Miete tatsächlich und regelmäßig vom Konto des Kindes, Nebenkostenabrechnung, Kind volljährig mit eigenem Haushalt. Zahlung aus dem Barunterhalt der Eltern ist zulässig (BFH IX R 30/98), eine bloße Verrechnung mit dem Unterhalt nicht. Abzugsquote aktuell {pct(a.sim.childQuota, 0)}{a.sim.childTup != null ? `, Totalüberschussprognose ${eur(a.sim.childTup)}` : ''}.
+            </Note>
+          )}
+
           <Sub>Übertragung der Immobilie</Sub>
           <Seg value={f.transfer} onChange={(v) => up((d) => { d.family.transfer = v })} options={[
             { value: 'none', label: 'Keine' },

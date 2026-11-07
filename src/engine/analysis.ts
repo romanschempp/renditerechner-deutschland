@@ -211,7 +211,7 @@ export function analyse(inp: Inputs, mode: CalcMode): Analysis {
   const family: FamilyRow[] = []
   let inheritance: Analysis['inheritance'] = null
   if (inp.family.enabled) {
-    const pctChild = inp.rent.phases.find((p) => p.kind === 'childRent')?.childPct ?? 66
+    const pctChild = inp.family.rentToChild ? inp.family.rentPct : inp.rent.phases.find((p) => p.kind === 'childRent')?.childPct ?? 66
     const variant = (key: string, label: string, description: string, v: Inputs) => {
       const s = simulate(v, { mode })
       const months = s.months
@@ -225,7 +225,7 @@ export function analyse(inp: Inputs, mode: CalcMode): Analysis {
         irrEk: s.irrEk,
       })
     }
-    const noTransfer = (v: Inputs) => { v.family.transfer = 'none'; return v }
+    const noTransfer = (v: Inputs) => { v.family.transfer = 'none'; v.family.rentToChild = false; return v }
     const ext = clone(inp)
     ext.rent.phases = mapPhases(ext.rent.phases, (p) => (p.kind === 'childRent' || p.kind === 'childFree' ? { ...p, kind: 'rent' } : p))
     variant('extern', 'Fremdvermietung', 'Marktmiete, voller Werbungskostenabzug, 10-Jahres-Frist', noTransfer(ext))

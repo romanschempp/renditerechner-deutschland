@@ -110,6 +110,10 @@ export function exampleInputs(): Inputs {
     family: {
       enabled: false,
       child: { name: 'Kind', age: 19, kindergeldUntil: 2032, zve: 0 },
+      rentToChild: false,
+      rentPct: 66,
+      rentFromYear: 0,
+      rentYears: 0,
       transfer: 'none',
       transferYear: 12,
       donors: 2,

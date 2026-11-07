@@ -57,7 +57,10 @@ export function UsageSection({ inp, up, a }: P) {
       {childPhase && !inp.family.enabled && (
         <Note>Für Kindergeld-Prüfung und Familienvergleich unter „8 · Familie“ die Angaben zum Kind aktivieren.</Note>
       )}
-      {r.phases.some((p) => p.kind === 'childRent') && (
+      {inp.family.enabled && inp.family.rentToChild && (
+        <Note>Vermietung an {inp.family.child.name || 'Kind'} ({num(inp.family.rentPct, 0)} %) ist unter „8 · Familie“ aktiv und ersetzt die Phasen ab Jahr {num(inp.family.rentFromYear, 1)}{inp.family.rentYears > 0 ? ` für ${num(inp.family.rentYears, 1)} Jahre` : ''}.</Note>
+      )}
+      {r.phases.some((p) => p.kind === 'childRent') && !(inp.family.enabled && inp.family.rentToChild) && (
         <Note tone="warn">
           Fremdvergleich bei Vermietung an Kinder: schriftlicher Mietvertrag, Miete tatsächlich und regelmäßig vom Konto des Kindes, Nebenkostenabrechnung, Kind volljährig mit eigenem Haushalt. Zahlung aus dem Barunterhalt der Eltern ist zulässig (BFH IX R 30/98), eine bloße Verrechnung mit dem Unterhalt nicht. Steuerlich: Abzugsquote aktuell {pct(a.sim.childQuota, 0)}{a.sim.childTup != null ? `, Totalüberschussprognose ${eur(a.sim.childTup)}` : ''}.
         </Note>
